@@ -81,9 +81,8 @@ const translations = {
   pt: {
     welcome: '👋 Olá, *{name}*!\n\n🛒 *Bem-vindo à nossa lojinha!*\n\nEscolha um produto abaixo:',
     catalog_title: '🛒 *Catálogo*\n\nEscolha um produto:',
-    choose_payment: '💳 *{product}*\n💰 Valor: *{price}*\n⭐ Stars: *{stars}*\n\nComo você quer pagar?',
+    choose_payment: '💳 *{product}*\n💰 Valor: *{price}*\n\nComo você quer pagar?',
     btn_pix: '⚡ Pagar com PIX',
-    btn_stars: '⭐ Pagar com Stars',
     btn_back: '◀️ Voltar ao catálogo',
     generating: '⏳ Gerando pagamento...',
     pix_title: '💳 *{product}*\n💰 Valor: *{price}*\n\n📱 Escaneie o QR Code ou use o botão "Copiar PIX".\n\n⏳ *Aguardando pagamento*\n⏰ *Expira em {minutes} minutos*',
@@ -91,7 +90,6 @@ const translations = {
     btn_check: '🔄 Verificar pagamento',
     btn_cancel: '❌ Cancelar',
     paid_title: '✅ *Pagamento aprovado!*\n\n💳 Produto: *{product}*\n💰 Valor: *{price}*\n🆔 `{id}`\n\n⚠️ *Este PIX já foi utilizado e não pode ser reutilizado.*\n\n_Obrigado pela compra!_ 🎉',
-    expired_title: '⏰ *PIX expirado*\n\n💳 Produto: *{product}*\n💰 Valor: *{price}*\n\nEste código de pagamento expirou e não pode mais ser usado.\n\n_Gere um novo PIX para concluir a compra._',
     cancelled_pix_title: '❌ *Compra cancelada*\n\nEste PIX foi invalidado e não pode mais ser utilizado.',
     btn_paid: '✅ Pago',
     btn_generate_new: '🔄 Gerar novo PIX',
@@ -109,7 +107,6 @@ const translations = {
     payment_not_found: '❌ Pagamento não encontrado',
     verifying: '🔍 Verificando pagamento...',
     check_error: '❌ Erro ao verificar. Tente novamente.',
-    stars_title: '⭐ *{product}*\n\nVocê escolheu pagar com *{stars} Stars*.',
 
     affiliate_title: '💰 *Painel de Afiliado*\n\n💵 *Saldo disponível:* R$ {balance}\n📈 *Total ganho:* R$ {earned}\n\n_Valor mínimo para saque: R$ 0,01_',
     btn_withdraw: '💸 Sacar agora',
@@ -136,9 +133,8 @@ const translations = {
   en: {
     welcome: '👋 Hello, *{name}*!\n\n🛒 *Welcome to our shop!*\n\nChoose a product below:',
     catalog_title: '🛒 *Catalog*\n\nChoose a product:',
-    choose_payment: '💳 *{product}*\n💰 Price: *{price}*\n⭐ Stars: *{stars}*\n\nHow would you like to pay?',
+    choose_payment: '💳 *{product}*\n💰 Price: *{price}*\n\nHow would you like to pay?',
     btn_pix: '⚡ Pay with PIX',
-    btn_stars: '⭐ Pay with Stars',
     btn_back: '◀️ Back to catalog',
     generating: '⏳ Generating payment...',
     pix_title: '💳 *{product}*\n💰 Price: *{price}*\n\n📱 Scan the QR Code or use "Copy PIX".\n\n⏳ *Awaiting payment*\n⏰ *Expires in {minutes} minutes*',
@@ -146,7 +142,6 @@ const translations = {
     btn_check: '🔄 Check payment',
     btn_cancel: '❌ Cancel',
     paid_title: '✅ *Payment approved!*\n\n💳 Product: *{product}*\n💰 Price: *{price}*\n🆔 `{id}`\n\n⚠️ *This PIX was already used and cannot be reused.*\n\n_Thank you for your purchase!_ 🎉',
-    expired_title: '⏰ *PIX expired*\n\n💳 Product: *{product}*\n💰 Price: *{price}*\n\nThis payment code expired and can no longer be used.\n\n_Generate a new PIX to complete the purchase._',
     cancelled_pix_title: '❌ *Purchase cancelled*\n\nThis PIX was invalidated and can no longer be used.',
     btn_paid: '✅ Paid',
     btn_generate_new: '🔄 Generate new PIX',
@@ -164,7 +159,6 @@ const translations = {
     payment_not_found: '❌ Payment not found',
     verifying: '🔍 Checking payment...',
     check_error: '❌ Error checking. Please try again.',
-    stars_title: '⭐ *{product}*\n\nYou chose to pay with *{stars} Stars*.',
 
     affiliate_title: '💰 *Affiliate Panel*\n\n💵 *Available balance:* R$ {balance}\n📈 *Total earned:* R$ {earned}',
     btn_withdraw: '💸 Withdraw now',
@@ -194,10 +188,10 @@ const translations = {
    PRODUTOS
    ============================================================ */
 const PRODUCTS = [
-  { id: 'teste', name: 'Produto Teste', nameEn: 'Test Product', price: 0.01, stars: 1   },
-  { id: 'p1',    name: 'Produto A',     nameEn: 'Product A',    price: 5.00, stars: 50  },
-  { id: 'p2',    name: 'Produto B',     nameEn: 'Product B',    price: 15.00, stars: 150 },
-  { id: 'p3',    name: 'Produto C',     nameEn: 'Product C',    price: 30.00, stars: 300 }
+  { id: 'teste', name: 'Produto Teste', nameEn: 'Test Product', price: 0.01 },
+  { id: 'p1',    name: 'Produto A',     nameEn: 'Product A',    price: 5.00 },
+  { id: 'p2',    name: 'Produto B',     nameEn: 'Product B',    price: 15.00 },
+  { id: 'p3',    name: 'Produto C',     nameEn: 'Product C',    price: 30.00 }
 ];
 
 /* ============================================================
@@ -260,7 +254,7 @@ function saveJSON(file, data) {
 let payments       = loadJSON(DATA_FILE, {});
 let withdrawals    = loadJSON(WITHDRAW_FILE, {});
 let affiliateBals  = loadJSON(BALANCE_FILE, {});
-let usedPixCodes   = loadJSON(USED_PIX_FILE, {}); // { pixCode: { usedAt, paymentId } }
+let usedPixCodes   = loadJSON(USED_PIX_FILE, {});
 
 function savePayments()      { saveJSON(DATA_FILE, payments); }
 function saveWithdrawals()   { saveJSON(WITHDRAW_FILE, withdrawals); }
@@ -272,10 +266,7 @@ function saveUsedPixCodes()  { saveJSON(USED_PIX_FILE, usedPixCodes); }
    ============================================================ */
 function markPixCodeAsUsed(pixCode, paymentId) {
   if (!pixCode) return;
-  usedPixCodes[pixCode] = {
-    usedAt: Date.now(),
-    paymentId
-  };
+  usedPixCodes[pixCode] = { usedAt: Date.now(), paymentId };
   saveUsedPixCodes();
 }
 
@@ -294,7 +285,6 @@ function markAsExpired(paymentId) {
   p.status = 'expired';
   p.expiredAt = Date.now();
   savePayments();
-  // Invalida o código
   markPixCodeAsUsed(p.pixCode, paymentId);
 }
 
@@ -337,14 +327,10 @@ function deductBalance(userId, amount) {
 }
 
 /* ============================================================
-   QR CODE COM STATUS (pending / paid / expired / cancelled)
-   - pending: QR normal
-   - paid: QR com check verde + tarja vermelha "UTILIZADO"
-   - expired: QR esmaecido + tarja "EXPIRADO"
-   - cancelled: QR esmaecido + tarja "CANCELADO"
+   QR CODE COM STATUS
+   pending / paid / expired / cancelled
    ============================================================ */
 async function generateQRWithStatus(text, status = 'pending') {
-  // 1) Gera o QR bonito base
   const qr = QRCode.create(text, { errorCorrectionLevel: 'H' });
   const modules = qr.modules;
   const size = modules.size;
@@ -390,7 +376,6 @@ async function generateQRWithStatus(text, status = 'pending') {
     drawFinder(padPx + (size - 7) * moduleSize, padPx) +
     drawFinder(padPx, padPx + (size - 7) * moduleSize);
 
-  // Se o QR for "morto" (paid/expired/cancelled), esmaece os pontinhos
   const dotsOpacity = (status === 'paid' || status === 'expired' || status === 'cancelled') ? 0.25 : 1;
 
   const svg = `
@@ -406,30 +391,20 @@ async function generateQRWithStatus(text, status = 'pending') {
   const W = meta.width;
   const H = meta.height;
 
-  // 2) Overlay específico por status
   let overlaySvg = '';
 
   if (status === 'paid') {
     const circleSize = Math.floor(W * 0.24);
-    const ribbonText = 'UTILIZADO';
     const fontSize = Math.floor(W * 0.13);
     overlaySvg = `
       <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-        <!-- Tarja vermelha diagonal -->
         <g transform="rotate(-35, ${W/2}, ${H/2})" opacity="0.92">
           <rect x="${W*0.08}" y="${H*0.42}" width="${W*0.84}" height="${fontSize*1.4}" rx="8" fill="#dc2626"/>
           <text x="${W/2}" y="${H*0.42 + fontSize*1.05}"
-                font-size="${fontSize}"
-                font-weight="900"
-                fill="#ffffff"
-                text-anchor="middle"
-                font-family="Arial, sans-serif"
-                letter-spacing="3">${ribbonText}</text>
+                font-size="${fontSize}" font-weight="900" fill="#ffffff"
+                text-anchor="middle" font-family="Arial, sans-serif" letter-spacing="3">UTILIZADO</text>
         </g>
-
-        <!-- Bolinha verde com check -->
-        <circle cx="${W/2}" cy="${H/2}" r="${circleSize/2}"
-                fill="#10b981" stroke="#ffffff" stroke-width="6"/>
+        <circle cx="${W/2}" cy="${H/2}" r="${circleSize/2}" fill="#10b981" stroke="#ffffff" stroke-width="6"/>
         <path d="M ${W/2 - circleSize*0.20} ${H/2}
                  L ${W/2 - circleSize*0.04} ${H/2 + circleSize*0.16}
                  L ${W/2 + circleSize*0.24} ${H/2 - circleSize*0.20}"
@@ -444,12 +419,8 @@ async function generateQRWithStatus(text, status = 'pending') {
         <g transform="rotate(-35, ${W/2}, ${H/2})" opacity="0.92">
           <rect x="${W*0.08}" y="${H*0.42}" width="${W*0.84}" height="${fontSize*1.4}" rx="8" fill="#f59e0b"/>
           <text x="${W/2}" y="${H*0.42 + fontSize*1.05}"
-                font-size="${fontSize}"
-                font-weight="900"
-                fill="#ffffff"
-                text-anchor="middle"
-                font-family="Arial, sans-serif"
-                letter-spacing="3">EXPIRADO</text>
+                font-size="${fontSize}" font-weight="900" fill="#ffffff"
+                text-anchor="middle" font-family="Arial, sans-serif" letter-spacing="3">EXPIRADO</text>
         </g>
       </svg>
     `;
@@ -460,12 +431,8 @@ async function generateQRWithStatus(text, status = 'pending') {
         <g transform="rotate(-35, ${W/2}, ${H/2})" opacity="0.9">
           <rect x="${W*0.08}" y="${H*0.42}" width="${W*0.84}" height="${fontSize*1.4}" rx="8" fill="#64748b"/>
           <text x="${W/2}" y="${H*0.42 + fontSize*1.05}"
-                font-size="${fontSize}"
-                font-weight="900"
-                fill="#ffffff"
-                text-anchor="middle"
-                font-family="Arial, sans-serif"
-                letter-spacing="3">CANCELADO</text>
+                font-size="${fontSize}" font-weight="900" fill="#ffffff"
+                text-anchor="middle" font-family="Arial, sans-serif" letter-spacing="3">CANCELADO</text>
         </g>
       </svg>
     `;
@@ -487,7 +454,7 @@ async function generateQRWithStatus(text, status = 'pending') {
 function catalogKeyboard(ctx) {
   const rows = PRODUCTS.map(p => [
     Markup.button.callback(
-      `${productName(p, ctx)} — R$ ${p.price.toFixed(2).replace('.', ',')} / ⭐ ${p.stars}`,
+      `${productName(p, ctx)} — R$ ${p.price.toFixed(2).replace('.', ',')}`,
       `buy:${p.id}`
     )
   ]);
@@ -727,8 +694,7 @@ bot.command('meuspedidos', async (ctx) => {
   if (!meus.length) return ctx.reply(t(ctx, 'no_orders'));
   const lista = meus.sort((a, b) => b.createdAt - a.createdAt).slice(0, 10).map(p => {
     const icon = p.status === 'paid' ? '✅' : p.status === 'expired' ? '⏰' : p.status === 'cancelled' ? '❌' : '⏳';
-    const method = p.method === 'stars' ? '⭐ Stars' : '⚡ PIX';
-    return `${icon} *${p.productName}* — ${p.method === 'stars' ? p.stars + ' Stars' : p.priceLabel} (${method})`;
+    return `${icon} *${p.productName}* — ${p.priceLabel}`;
   }).join('\n');
   await ctx.reply(t(ctx, 'my_orders', { list: lista }), { parse_mode: 'Markdown' });
 });
@@ -1043,13 +1009,11 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
 
   const rows = [
     [Markup.button.callback(t(ctx, 'btn_pix'), `pay:pix:${product.id}`)],
-    [Markup.button.callback(t(ctx, 'btn_stars'), `pay:stars:${product.id}`)],
     [Markup.button.callback(t(ctx, 'btn_back'), 'open_catalog')]
   ];
   const caption = t(ctx, 'choose_payment', {
     product: productName(product, ctx),
-    price: formatPrice(product),
-    stars: product.stars
+    price: formatPrice(product)
   });
 
   try {
@@ -1090,7 +1054,6 @@ bot.action(/^pay:pix:(.+)$/, async (ctx) => {
     const pixData = result.point_of_interaction?.transaction_data;
     if (!pixData?.qr_code) throw new Error('Sem QR Code');
 
-    // Verifica se o código já foi usado (segurança extra)
     if (isPixCodeUsed(pixData.qr_code)) {
       throw new Error('Este código PIX já foi utilizado. Gere um novo.');
     }
@@ -1134,58 +1097,6 @@ bot.action(/^pay:pix:(.+)$/, async (ctx) => {
 });
 
 /* ============================================================
-   STARS
-   ============================================================ */
-bot.action(/^pay:stars:(.+)$/, async (ctx) => {
-  const productId = ctx.match[1];
-  const product = PRODUCTS.find(p => p.id === productId);
-  if (!product) return ctx.answerCbQuery(t(ctx, 'product_not_found'), { show_alert: true });
-
-  await ctx.answerCbQuery();
-  try {
-    const payload = JSON.stringify({
-      kind: 'stars_purchase', userId: ctx.from.id, productId: product.id
-    });
-    await ctx.replyWithInvoice({
-      title: productName(product, ctx),
-      description: `${product.stars} Stars`,
-      payload,
-      provider_token: '',
-      currency: 'XTR',
-      prices: [{ label: `${product.stars} Stars`, amount: product.stars }]
-    });
-  } catch (err) {
-    console.error('Erro Stars:', err);
-    await ctx.reply(t(ctx, 'error_generic'));
-  }
-});
-
-bot.on('pre_checkout_query', async (ctx) => {
-  try { await ctx.answerPreCheckoutQuery(true); } catch (e) {}
-});
-
-bot.on('successful_payment', async (ctx) => {
-  try {
-    const sp = ctx.message.successful_payment;
-    let payload = {};
-    try { payload = JSON.parse(sp.invoice_payload); } catch (e) {}
-    const product = PRODUCTS.find(p => p.id === payload.productId) || { name: 'Produto' };
-    const paymentId = `stars_${sp.telegram_payment_charge_id || Date.now()}`;
-    payments[paymentId] = {
-      paymentId, chatId: ctx.chat.id, userId: ctx.from.id,
-      method: 'stars', productId: product.id, productName: product.name,
-      stars: sp.total_amount, priceLabel: `${sp.total_amount} Stars`,
-      status: 'paid', createdAt: Date.now(), paidAt: Date.now()
-    };
-    savePayments();
-    await ctx.reply(
-      `✅ *Pagamento aprovado!*\n\n💳 ${product.name}\n⭐ ${sp.total_amount} Stars\n\n_Obrigado!_ 🎉`,
-      { parse_mode: 'Markdown' }
-    );
-  } catch (err) { console.error('Erro successful_payment:', err); }
-});
-
-/* ============================================================
    VERIFICAR PAGAMENTO PIX
    ============================================================ */
 bot.action(/^check:(.+)$/, async (ctx) => {
@@ -1194,23 +1105,19 @@ bot.action(/^check:(.+)$/, async (ctx) => {
 
   if (!info) return ctx.answerCbQuery(t(ctx, 'payment_not_found'), { show_alert: true });
 
-  // 🔒 BLOQUEIO 1: Se já foi pago, recusa qualquer nova verificação
   if (info.status === 'paid') {
     return ctx.answerCbQuery(t(ctx, 'already_paid'), { show_alert: true });
   }
 
-  // 🔒 BLOQUEIO 2: Se expirou, marca e recusa
   if (info.status === 'expired' || isExpired(info)) {
     if (info.status !== 'expired') markAsExpired(paymentId);
     return ctx.answerCbQuery(t(ctx, 'payment_expired'), { show_alert: true });
   }
 
-  // 🔒 BLOQUEIO 3: Se foi cancelado, recusa
   if (info.status === 'cancelled') {
     return ctx.answerCbQuery('❌ Este PIX foi cancelado.', { show_alert: true });
   }
 
-  // 🔒 BLOQUEIO 4: Se o código PIX já está na lista de usados
   if (isPixCodeUsed(info.pixCode)) {
     info.status = 'paid';
     info.paidAt = Date.now();
@@ -1225,15 +1132,12 @@ bot.action(/^check:(.+)$/, async (ctx) => {
     const status = result.status;
 
     if (status === 'approved' || status === 'paid') {
-      // ✅ PAGO — invalida o código para sempre
       info.status = 'paid';
       info.paidAt = Date.now();
       savePayments();
 
-      // 🔐 Marca o código PIX como usado (impede reuso)
       markPixCodeAsUsed(info.pixCode, paymentId);
 
-      // Gera QR com tarja "UTILIZADO"
       const newQr = await generateQRWithStatus(info.pixCode, 'paid');
       const caption = t(ctx, 'paid_title', {
         product: info.productName,
@@ -1277,7 +1181,6 @@ bot.action(/^cancel:(.+)$/, async (ctx) => {
     info.status = 'cancelled';
     info.cancelledAt = Date.now();
     savePayments();
-    // 🔐 Invalida o código
     markPixCodeAsUsed(info.pixCode, paymentId);
   }
 
@@ -1300,22 +1203,6 @@ bot.action(/^cancel:(.+)$/, async (ctx) => {
         ...Markup.inlineKeyboard([[Markup.button.callback('🛒 /catalogo', 'open_catalog')]])
       });
     } catch (e2) {}
-  }
-});
-
-/* ============================================================
-   GERAR NOVO PIX (após expirar/cancelar)
-   ============================================================ */
-bot.action(/^renew:(.+)$/, async (ctx) => {
-  const productId = ctx.match[1];
-  await ctx.answerCbQuery();
-  await ctx.reply('⏳ Gerando novo PIX...');
-  // Simula clique em "pay:pix:..."
-  const fakeCtx = { ...ctx, match: [null, productId] };
-  try {
-    await bot.action(/^pay:pix:(.+)$/).middleware()(ctx);
-  } catch (e) {
-    await ctx.reply('❌ Erro ao renovar. Use /catalogo.');
   }
 });
 
@@ -1366,7 +1253,6 @@ app.post('/webhook', async (req, res) => {
           info.paidAt = Date.now();
           savePayments();
 
-          // 🔐 Invalida o código PIX
           markPixCodeAsUsed(info.pixCode, paymentId);
 
           const lang = userLanguages.get(info.userId) || 'pt';
@@ -1409,7 +1295,7 @@ setInterval(() => {
     }
   });
   if (alterou) savePayments();
-}, 60 * 1000); // roda a cada 1 minuto
+}, 60 * 1000);
 
 /* ============================================================
    ROTAS UTILITÁRIAS
@@ -1437,7 +1323,7 @@ app.listen(PORT, async () => {
   try {
     await bot.telegram.setWebhook(`${WEBHOOK_URL}/telegram`, {
       drop_pending_updates: true,
-      allowed_updates: ['message', 'callback_query', 'pre_checkout_query']
+      allowed_updates: ['message', 'callback_query']
     });
     console.log(`✅ Webhook Telegram registrado`);
   } catch (err) {
