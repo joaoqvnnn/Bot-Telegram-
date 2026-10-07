@@ -1,0 +1,21 @@
+{
+  "name": "telegram-shop-bot",
+  "version": "1.0.0",
+  "description": "Bot de lojinha no Telegram com PIX",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mercadopago": "^2.0.15",
+    "qrcode": "^1.5.3",
+    "sharp": "^0.33.4",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
