@@ -11,16 +11,16 @@ const path = require('path');
 /* ============================================================
    CONFIGURAÇÃO
    ============================================================ */
-const BOT_TOKEN      = process.env.BOT_TOKEN;
+const BOT_TOKEN       = process.env.BOT_TOKEN;
 const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
-const WEBHOOK_URL    = process.env.WEBHOOK_URL || 'http://localhost:3000';
-const PORT           = process.env.PORT || 3000;
+const WEBHOOK_URL     = process.env.WEBHOOK_URL || 'http://localhost:3000';
+const PORT            = process.env.PORT || 3000;
 
 if (!BOT_TOKEN)       { console.error('❌ BOT_TOKEN não configurado'); process.exit(1); }
 if (!MP_ACCESS_TOKEN) { console.error('❌ MP_ACCESS_TOKEN não configurado'); process.exit(1); }
 
-const bot      = new Telegraf(BOT_TOKEN);
-const mpClient = new MercadoPagoConfig({ accessToken: MP_ACCESS_TOKEN });
+const bot       = new Telegraf(BOT_TOKEN);
+const mpClient  = new MercadoPagoConfig({ accessToken: MP_ACCESS_TOKEN });
 const mpPayment = new Payment(mpClient);
 
 /* ============================================================
@@ -57,8 +57,8 @@ const PRODUCTS = [
 /* ============================================================
    ARMAZENAMENTO SIMPLES (arquivo JSON)
    ============================================================ */
-const DATA_DIR   = path.join(__dirname, 'data');
-const DATA_FILE  = path.join(DATA_DIR, 'payments.json');
+const DATA_DIR  = path.join(__dirname, 'data');
+const DATA_FILE = path.join(DATA_DIR, 'payments.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -81,21 +81,29 @@ function savePayments() {
 }
 
 /* ============================================================
+   GERA E-MAIL VÁLIDO PARA O MERCADO PAGO
+   (o MP exige um e-mail com domínio real)
+   ============================================================ */
+function buildPayerEmail(ctx) {
+  const rawUser = ctx.from.username || `user${ctx.from.id}`;
+  const cleanUser = String(rawUser).replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase() || `user${ctx.from.id}`;
+  return `${cleanUser}@example.com`;
+}
+
+/* ============================================================
    GERAR QR CODE
    paid = true → adiciona bolinha verde no meio com ✓
    ============================================================ */
 async function generateQR(pixCode, paid = false) {
-  // QR code base
   const qrBuffer = await QRCode.toBuffer(pixCode, {
     width: 600,
     margin: 2,
-    errorCorrectionLevel: 'H', // alta correção para aguentar a bolinha
+    errorCorrectionLevel: 'H',
     color: { dark: '#000000', light: '#ffffff' }
   });
 
   if (!paid) return qrBuffer;
 
-  // Bolinha verde com check no centro
   const size = 140;
   const circleSvg = Buffer.from(`
     <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
@@ -149,7 +157,6 @@ bot.command('catalogo', async (ctx) => {
 });
 
 bot.command('meuspedidos', async (ctx) => {
-  const userId = ctx.from.id;
   const meus = Object.values(payments).filter(p => p.chatId === ctx.chat.id);
 
   if (!meus.length) {
@@ -190,7 +197,7 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
         description: product.name,
         payment_method_id: 'pix',
         payer: {
-          email: `user${ctx.from.id}@telegram.pix`,
+          email: buildPayerEmail(ctx),
           first_name: ctx.from.first_name || 'Cliente'
         },
         external_reference: idempotencyKey,
@@ -204,7 +211,6 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
       throw new Error('Resposta sem QR Code do Mercado Pago');
     }
 
-    // Salva o pagamento
     payments[String(result.id)] = {
       paymentId: String(result.id),
       chatId: ctx.chat.id,
@@ -218,7 +224,6 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
     };
     savePayments();
 
-    // Gera o QR Code SEM bolinha
     const qrBuffer = await generateQR(pixData.qr_code, false);
 
     const caption =
@@ -234,13 +239,13 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
         caption,
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
+          [Markup.button.callback('📋 Copiar PIX', `copy:${result.id}`)],
           [Markup.button.callback('⏳ Aguardando pagamento', `check:${result.id}`)],
           [Markup.button.callback('❌ Cancelar', `cancel:${result.id}`)]
         ])
       }
     );
 
-    // Atualiza o messageId
     payments[String(result.id)].messageId = sent.message_id;
     savePayments();
 
@@ -248,6 +253,22 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
     console.error('Erro ao criar PIX:', err);
     await ctx.reply('❌ Erro ao gerar o PIX. Tente novamente em alguns segundos.');
   }
+});
+
+/* ============================================================
+   COPIAR PIX (mostra o código em alerta)
+   ============================================================ */
+bot.action(/^copy:(.+)$/, async (ctx) => {
+  const paymentId = ctx.match[1];
+  const info      = payments[paymentId];
+  if (!info) return ctx.answerCbQuery('❌ Não encontrado');
+
+  await ctx.answerCbQuery('📋 Copie o código abaixo na próxima mensagem', { show_alert: false });
+  await ctx.reply(
+    `📋 *Código PIX (copia e cola)*\n\n` +
+    `\`${info.pixCode}\``,
+    { parse_mode: 'Markdown' }
+  );
 });
 
 /* ============================================================
@@ -272,12 +293,10 @@ bot.action(/^check:(.+)$/, async (ctx) => {
     const status = result.status;
 
     if (status === 'approved' || status === 'paid') {
-      // Marca como pago
       info.status = 'paid';
       info.paidAt = Date.now();
       savePayments();
 
-      // Gera QR com bolinha verde
       const newQr = await generateQR(info.pixCode, true);
 
       const newCaption =
@@ -287,7 +306,6 @@ bot.action(/^check:(.+)$/, async (ctx) => {
         `🆔 ID: \`${paymentId}\`\n\n` +
         `_Obrigado pela compra!_ 🎉`;
 
-      // EDITA A MENSAGEM EXISTENTE (não envia nova)
       try {
         await ctx.editMessageMedia(
           {
@@ -366,13 +384,12 @@ bot.action('open_catalog', async (ctx) => {
 
 /* ============================================================
    WEBHOOK DO MERCADO PAGO
-   (atualiza automaticamente quando o pagamento cai)
    ============================================================ */
 const app = express();
 app.use(express.json());
 
 app.post('/webhook', async (req, res) => {
-  res.sendStatus(200); // responde rápido
+  res.sendStatus(200);
 
   try {
     const { type, data } = req.body;
@@ -389,7 +406,6 @@ app.post('/webhook', async (req, res) => {
           info.paidAt = Date.now();
           savePayments();
 
-          // Gera QR com bolinha
           const newQr = await generateQR(info.pixCode, true);
 
           const newCaption =
@@ -399,7 +415,6 @@ app.post('/webhook', async (req, res) => {
             `🆔 ID: \`${paymentId}\`\n\n` +
             `_Obrigado pela compra!_ 🎉`;
 
-          // Edita a mensagem via API do Telegram
           try {
             await bot.telegram.editMessageMedia(
               info.chatId,
