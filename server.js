@@ -50,7 +50,7 @@ function savePayments() {
 }
 
 /* ============================================================
-   E-MAIL DO PAGADOR (obrigatório e válido para o Mercado Pago)
+   E-MAIL DO PAGADOR
    ============================================================ */
 function buildPayerEmail(ctx) {
   const rawUser = ctx.from.username || `user${ctx.from.id}`;
@@ -59,29 +59,22 @@ function buildPayerEmail(ctx) {
 }
 
 /* ============================================================
-   🎨 QR CODE BONITO
-   - Pontinhos arredondados
-   - 3 "olhos" (finder patterns) estilizados
-   - Fundo branco limpo
-   - Bolinha verde ✅ no centro quando pago
+   QR CODE BONITO
    ============================================================ */
 async function generateBeautifulQR(text, paid = false) {
-  // 1) Matriz do QR
   const qr = QRCode.create(text, { errorCorrectionLevel: 'H' });
   const modules = qr.modules;
   const size = modules.size;
   const data = modules.data;
 
-  // 2) Configurações visuais
-  const moduleSize = 14;   // px por módulo
-  const padding    = 3;    // margem em módulos
+  const moduleSize = 14;
+  const padding    = 3;
   const totalModules = size + padding * 2;
   const totalSize = totalModules * moduleSize;
 
-  const fgColor = '#0f172a';  // azul-escuro quase preto (mais elegante)
+  const fgColor = '#0f172a';
   const bgColor = '#ffffff';
 
-  // 3) Verifica se faz parte dos "olhos" (finder patterns nos 3 cantos)
   function inFinder(row, col) {
     const tl = row < 7 && col < 7;
     const tr = row < 7 && col >= size - 7;
@@ -89,13 +82,11 @@ async function generateBeautifulQR(text, paid = false) {
     return tl || tr || bl;
   }
 
-  // 4) Constrói os pontinhos
   let dots = '';
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       if (!data[r * size + c]) continue;
       if (inFinder(r, c)) continue;
-
       const x = (c + padding) * moduleSize + moduleSize / 2;
       const y = (r + padding) * moduleSize + moduleSize / 2;
       const radius = (moduleSize / 2) * 0.92;
@@ -103,7 +94,6 @@ async function generateBeautifulQR(text, paid = false) {
     }
   }
 
-  // 5) "Olhos" arredondados (Finder Patterns)
   function drawFinder(startX, startY) {
     const s = moduleSize;
     return `
@@ -119,7 +109,6 @@ async function generateBeautifulQR(text, paid = false) {
     drawFinder(padPx + (size - 7) * moduleSize, padPx) +
     drawFinder(padPx, padPx + (size - 7) * moduleSize);
 
-  // 6) SVG completo com cantos arredondados
   const radius = 24;
   const svg = `
     <svg width="${totalSize}" height="${totalSize}" viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg">
@@ -131,7 +120,6 @@ async function generateBeautifulQR(text, paid = false) {
 
   let png = await sharp(Buffer.from(svg)).png().toBuffer();
 
-  // 7) Se pago → bolinha verde com check no meio
   if (paid) {
     const circleSize = Math.floor(totalSize * 0.22);
     const circleSvg = Buffer.from(`
@@ -204,7 +192,7 @@ bot.command('meuspedidos', async (ctx) => {
 });
 
 /* ============================================================
-   COMPRAR — GERA PIX E ENVIA QR CODE
+   COMPRAR — GERA PIX
    ============================================================ */
 bot.action(/^buy:(.+)$/, async (ctx) => {
   const productId = ctx.match[1];
@@ -216,11 +204,11 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   try {
     const idempotencyKey = `tg-${ctx.from.id}-${Date.now()}`;
 
-    const result =Data await mpPayment.create =({
+    const result = await mpPayment.create({
       body: {
-        result transaction_amount: product.price,
-        description: product.p.name,
-        payment_method_id: 'ointpix',
+        transaction_amount: product.price,
+        description: product.name,
+        payment_method_id: 'pix',
         payer: {
           email: buildPayerEmail(ctx),
           first_name: ctx.from.first_name || 'Cliente'
@@ -231,7 +219,7 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
       requestOptions: { idempotencyKey }
     });
 
-    const pix_of_interaction?.transaction_data;
+    const pixData = result.point_of_interaction?.transaction_data;
     if (!pixData || !pixData.qr_code) throw new Error('Resposta sem QR Code do Mercado Pago');
 
     payments[String(result.id)] = {
@@ -247,16 +235,14 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
     };
     savePayments();
 
-    // QR bonito (sem bolinha)
     const qrBuffer = await generateBeautifulQR(pixData.qr_code, false);
 
     const caption =
       `💳 *${product.name}*\n` +
       `💰 Valor: *R$ ${product.price.toFixed(2).replace('.', ',')}*\n\n` +
-      `📱 Escaneie o QR Code ou use o botão "Copiar PIX" abaixo.\n\n` +
+      `📱 Escaneie o QR Code ou use o botão "Copiar PIX".\n\n` +
       `⏳ *Aguardando pagamento*`;
 
-    // ⚡ Botão "Copiar PIX" silencioso (copy_text)
     const buttons = [
       [{ text: '📋 Copiar PIX', copy_text: { text: pixData.qr_code } }],
       [Markup.button.callback('🔄 Verificar pagamento', `check:${result.id}`)],
@@ -282,7 +268,7 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
 });
 
 /* ============================================================
-   VERIFICAR PAGAMENTO — EDITA A MENSAGEM
+   VERIFICAR PAGAMENTO
    ============================================================ */
 bot.action(/^check:(.+)$/, async (ctx) => {
   const paymentId = ctx.match[1];
@@ -331,7 +317,7 @@ bot.action(/^check:(.+)$/, async (ctx) => {
 
     } else if (status === 'pending' || status === 'in_process') {
       await ctx.answerCbQuery(
-        '⏳ Ainda não identificamos o pagamento.\nAguarde alguns segundos e tente novamente.',
+        '⏳ Ainda não identificamos o pagamento.\nAguarde e tente novamente.',
         { show_alert: true }
       );
     } else {
